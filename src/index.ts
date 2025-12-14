@@ -119,11 +119,23 @@ app.get(
   }
 );
 
-// PeerJS server (WebRTC signaling) mounted at /peerjs
-const peerServer = ExpressPeerServer(server, { path: "/peerjs" });
+/**
+ * PeerJS server (WebRTC signaling).
+ *
+ * IMPORTANT:
+ * - We mount at /peerjs in Express
+ * - The internal PeerJS `path` is "/" so the final URL is:
+ *     <BASE_URL>/peerjs
+ *   which matches the client config that uses `path: "/peerjs"`.
+ */
+const peerServer = ExpressPeerServer(server, {
+  path: "/", // <- clave para evitar /peerjs/peerjs
+});
 app.use("/peerjs", peerServer);
 
-// Socket.IO server (room membership + peer list)
+/**
+ * Socket.IO server (room membership + peer list)
+ */
 const io = new Server(server, {
   cors: {
     origin: (
